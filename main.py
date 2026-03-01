@@ -18,7 +18,12 @@ def main(year: int | None = None, month: int | None = None, template_file: str |
     # load last state
     shift_file = os.path.join(out_dir, 'shift_log.json')
     state = storage.load_shift_state(shift_file)
-    start_shift = state.get('shift_counter', 0)
+    # For January 2026, initialize with shift=1 (so Jan 4 starts with shift=0)
+    # Otherwise use stored state
+    if not state and year == 2026 and month == 1:
+        start_shift = 1
+    else:
+        start_shift = state.get('shift_counter', 0)
 
     dates, end_shift = cal.generate_working_dates(year, month, start_shift)
 
